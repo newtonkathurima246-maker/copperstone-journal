@@ -21,7 +21,7 @@ const COPPERSTONE_CONFIG = {
    The frontend never talks to MetaTrader directly. It only calls the
    user's already-running local bridge over HTTP. No credentials are
    ever collected or transmitted by this app. */
-const MT5_BRIDGE_URL = 'https://woods-passion-aruba-key.trycloudflare.com';
+const MT5_BRIDGE_URL = 'https://mounts-instruction-emerald-got.trycloudflare.com';
 const MT5_ENDPOINTS = {
   status: '/api/mt5/status',
   account: '/api/mt5/account',
