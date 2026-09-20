@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Copperstone Trade Journal</title>
+<meta name="description" content="Copperstone — a professional Forex trade journal: performance analytics, risk management, psychology tracking and reporting.">
+<meta name="theme-color" content="#0b0d10">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c47a44'/%3E%3Cpath d='M12 44l14-14 9 9 17-19' fill='none' stroke='%231a0f06' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="skip-link" href="#mainContent">Skip to main content</a>
+<noscript><div class="noscript-msg">Copperstone needs JavaScript enabled to run.</div></noscript>
+
+<!-- ============ LOCAL PROFILE / SIGN-IN SCREEN ============ -->
+<div class="auth-screen" id="authScreen" hidden>
+  <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="auth-brand">
+      <div class="brand-mark"><i class="fa-solid fa-chart-line"></i></div>
+      <div>
+        <div class="brand-name">Copperstone</div>
+        <div class="brand-sub">Trade Journal</div>
+      </div>
+    </div>
+    <h1 id="authTitle" class="auth-title">Welcome back</h1>
+    <p class="auth-sub" id="authSub">Sign in to your local Copperstone profile.</p>
+
+    <div class="auth-tabs" role="tablist">
+      <button type="button" class="auth-tab active" id="authTabLogin" role="tab" data-auth-tab="login">Log In</button>
+      <button type="button" class="auth-tab" id="authTabSignup" role="tab" data-auth-tab="signup">Sign Up</button>
+    </div>
+
+    <form id="loginForm" class="auth-form" novalidate>
+      <div class="field">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" autocomplete="username" required>
+        <div class="field-error" id="loginEmailErr"></div>
+      </div>
+      <div class="field">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" autocomplete="current-password" required>
+        <div class="field-error" id="loginPasswordErr"></div>
+      </div>
+      <div class="form-alert" id="loginAlert" role="alert" hidden></div>
+      <button type="submit" class="btn btn-primary btn-block" id="loginSubmit">Log In</button>
+      <button type="button" class="link-btn" id="forgotPasswordBtn">Forgot password?</button>
+    </form>
+
+    <form id="signupForm" class="auth-form" novalidate hidden>
+      <div class="field">
+        <label for="signupName">Full name</label>
+        <input type="text" id="signupName" autocomplete="name" required>
+        <div class="field-error" id="signupNameErr"></div>
+      </div>
+      <div class="field">
+        <label for="signupEmail">Email</label>
+        <input type="email" id="signupEmail" autocomplete="email" required>
+        <div class="field-error" id="signupEmailErr"></div>
+      </div>
+      <div class="field">
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" autocomplete="new-password" required aria-describedby="pwStrengthLabel">
+        <div class="pw-meter" aria-hidden="true"><span id="pwMeterBar"></span></div>
+        <div class="pw-hint" id="pwStrengthLabel">Use 10+ characters with upper &amp; lower case, a number and a symbol.</div>
+        <div class="field-error" id="signupPasswordErr"></div>
+      </div>
+      <div class="field">
+        <label for="signupConfirm">Confirm password</label>
+        <input type="password" id="signupConfirm" autocomplete="new-password" required>
+        <div class="field-error" id="signupConfirmErr"></div>
+      </div>
+      <div class="form-alert" id="signupAlert" role="alert" hidden></div>
+      <button type="submit" class="btn btn-primary btn-block" id="signupSubmit">Create Local Profile</button>
+      <button type="button" class="link-btn" id="continueGuestBtn">Continue without a profile</button>
+    </form>
+
+    <div class="auth-notice">
+      <i class="fa-solid fa-shield-halved"></i>
+      <span><b>Local profile only.</b> Your name, email and a salted password hash are stored in this browser. This is a convenience lock for this device &mdash; <b>not</b> production-grade authentication, and it does not sync across devices. Real multi-user accounts require a server.</span>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><i class="fa-solid fa-chart-line"></i></div>
+      <div class="brand-text">
+        <span class="brand-name">Copperstone</span>
+        <span class="brand-sub">Trade Journal</span>
+      </div>
+    </div>
+
+    <nav class="nav" id="mainNav">
+      <button class="nav-item active" data-page="dashboard"><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></button>
+      <button class="nav-item" data-page="journal"><i class="fa-solid fa-book-open"></i><span>Trade Journal</span></button>
+      <button class="nav-item" data-page="analytics"><i class="fa-solid fa-chart-pie"></i><span>Analytics</span></button>
+      <button class="nav-item" data-page="strategies"><i class="fa-solid fa-chess"></i><span>Strategies</span></button>
+      <button class="nav-item" data-page="calendar"><i class="fa-solid fa-calendar-days"></i><span>Calendar</span></button>
+      <button class="nav-item" data-page="risk"><i class="fa-solid fa-shield-halved"></i><span>Risk Management</span></button>
+      <button class="nav-item" data-page="goals"><i class="fa-solid fa-bullseye"></i><span>Goals</span></button>
+      <button class="nav-item" data-page="psychology"><i class="fa-solid fa-brain"></i><span>Psychology</span></button>
+      <button class="nav-item" data-page="reports"><i class="fa-solid fa-file-lines"></i><span>Reports</span></button>
+      <button class="nav-item" data-page="accounts"><i class="fa-solid fa-building-columns"></i><span>Accounts</span></button>
+      <button class="nav-item" data-page="mt5"><i class="fa-solid fa-plug-circle-bolt"></i><span>MT5 Sync</span></button>
+      <button class="nav-item" data-page="settings"><i class="fa-solid fa-gear"></i><span>Settings</span></button>
+    </nav>
+
+    <div class="sidebar-account">
+      <div class="user-row">
+        <button class="user-chip" id="userChip" type="button" aria-label="Open profile">
+          <span class="user-avatar" id="userAvatar"><i class="fa-solid fa-user"></i></span>
+          <span class="user-chip-text">
+            <span class="user-chip-name" id="userChipName">Guest</span>
+            <span class="user-chip-sub" id="userChipSub">No local profile</span>
+          </span>
+        </button>
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="Toggle theme"><i class="fa-solid fa-sun"></i></button>
+        <button class="icon-btn" id="logoutBtn" type="button" aria-label="Log out" hidden><i class="fa-solid fa-right-from-bracket"></i></button>
+      </div>
+      <div class="sidebar-account-label">Active Account</div>
+      <select id="sidebarAccountSelect" class="select-account"></select>
+      <div class="sidebar-balance">
+        <span class="sidebar-balance-label">Balance</span>
+        <span class="sidebar-balance-value" id="sidebarBalance">$0.00</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ MOBILE TOPBAR ============ -->
+  <header class="mobile-topbar">
+    <button class="icon-btn" id="mobileMenuBtn" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+    <div class="mobile-brand"><i class="fa-solid fa-chart-line"></i> Copperstone</div>
+    <button class="icon-btn" id="mobileAddTradeBtn" aria-label="Add trade"><i class="fa-solid fa-plus"></i></button>
+  </header>
+  <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+
+  <!-- ============ MOBILE BOTTOM NAV ============ -->
+  <nav class="mobile-bottom-nav" id="mobileBottomNav">
+    <button class="mnb-item active" data-page="dashboard"><i class="fa-solid fa-gauge-high"></i><span>Home</span></button>
+    <button class="mnb-item" data-page="journal"><i class="fa-solid fa-book-open"></i><span>Journal</span></button>
+    <button class="mnb-item" data-page="analytics"><i class="fa-solid fa-chart-pie"></i><span>Stats</span></button>
+    <button class="mnb-item" data-page="risk"><i class="fa-solid fa-calculator"></i><span>Risk</span></button>
+    <button class="mnb-item" data-page="settings"><i class="fa-solid fa-gear"></i><span>More</span></button>
+  </nav>
+
+  <!-- ============ MAIN CONTENT ============ -->
+  <main class="main" id="mainContent" tabindex="-1">
+
+    <!-- ---------- DASHBOARD ---------- -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <h1>Dashboard</h1>
+          <p class="page-sub">Your trading performance at a glance</p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-ghost" id="qaExport"><i class="fa-solid fa-download"></i> Export</button>
+          <button class="btn btn-primary" id="qaAddTrade"><i class="fa-solid fa-plus"></i> Add Trade</button>
+        </div>
+      </div>
+
+      <div class="demo-banner" id="demoBanner" style="display:none;">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>You're viewing sample demo data. Clear it to start journaling your own trades &mdash; your accounts and settings can be re-created at any time.</span>
+        <button class="btn btn-ghost btn-sm" id="demoClearBtn" type="button">Clear Demo Data</button>
+      </div>
+
+      <div class="card mt5-mini-card" id="mt5MiniCard">
+        <div class="mt5-mini-status">
+          <span class="mt5-status-dot" id="mt5MiniDot"></span>
+          <div>
+            <div class="mt5-mini-title" id="mt5MiniTitle">MT5 bridge not connected</div>
+            <div class="mt5-mini-sub" id="mt5MiniSub">Connect your MetaTrader 5 bridge to sync trades automatically.</div>
+          </div>
+        </div>
+        <div class="mt5-mini-actions">
+          <div class="mt5-mini-figures" id="mt5MiniFigures" style="display:none;"></div>
+          <button class="btn btn-ghost btn-sm" data-page-link="mt5">Open MT5 Sync</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid" id="kpiGrid"></div>
+
+      <div class="card">
+        <div class="card-head"><h3>Risk Status</h3><button class="btn btn-ghost btn-sm" data-page-link="risk">Risk Rules</button></div>
+        <div id="dashRiskStatus" class="risk-status"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card chart-card">
+          <div class="card-head">
+            <h3>Equity Curve</h3>
+          </div>
+          <div class="chart-wrap"><canvas id="chartEquity"></canvas></div>
+        </div>
+        <div class="card chart-card">
+          <div class="card-head">
+            <h3>Drawdown</h3>
+          </div>
+          <div class="chart-wrap"><canvas id="chartDrawdown"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Performance Summary</h3></div>
+        <div class="perf-summary" id="perfSummary"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Detailed Statistics</h3><span class="card-note">Closed trades, active account</span></div>
+        <div class="stat-grid" id="dashStatsGrid"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><h3>Pair Performance</h3></div>
+          <div id="pairPerformance" class="perf-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Strategy Performance</h3></div>
+          <div id="strategyPerformance" class="perf-list"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Recent Trades</h3>
+          <button class="btn btn-ghost btn-sm" data-page-link="journal">View All</button>
+        </div>
+        <div class="table-wrap" id="recentTradesWrap"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Quick Actions</h3></div>
+        <div class="quick-actions">
+          <button class="quick-action" id="qaAddTrade2"><i class="fa-solid fa-plus"></i><span>Add Trade</span></button>
+          <button class="quick-action" id="qaRisk"><i class="fa-solid fa-calculator"></i><span>Risk Calculator</span></button>
+          <button class="quick-action" id="qaGoal"><i class="fa-solid fa-bullseye"></i><span>Create Goal</span></button>
+          <button class="quick-action" id="qaAccount"><i class="fa-solid fa-building-columns"></i><span>Add Account</span></button>
+          <button class="quick-action" id="qaExport2"><i class="fa-solid fa-download"></i><span>Export Data</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- JOURNAL ---------- -->
+    <section class="page" id="page-journal">
+      <div class="page-header">
+        <div>
+          <h1>Trade Journal</h1>
+          <p class="page-sub">Every trade, tracked and analyzed</p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-ghost" id="journalExportBtn"><i class="fa-solid fa-file-csv"></i> Export Filtered CSV</button>
+          <button class="btn btn-primary" id="openAddTradeBtn"><i class="fa-solid fa-plus"></i> Add Trade</button>
+        </div>
+      </div>
+
+      <div class="card filter-card">
+        <div class="filter-row">
+          <div class="input-group grow">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchTrades" placeholder="Search pair, strategy, notes, tags...">
+          </div>
+          <select id="filterAccount" aria-label="Account"><option value="all">All Accounts</option></select>
+          <select id="filterPair" aria-label="Currency pair"><option value="all">All Pairs</option></select>
+          <select id="filterDirection">
+            <option value="all">All Directions</option>
+            <option value="Buy">Buy</option>
+            <option value="Sell">Sell</option>
+          </select>
+          <select id="filterResult">
+            <option value="all">All Results</option>
+            <option value="Win">Win</option>
+            <option value="Loss">Loss</option>
+            <option value="Breakeven">Breakeven</option>
+          </select>
+          <select id="filterStrategy"><option value="all">All Strategies</option></select>
+          <select id="filterSession"><option value="all">All Sessions</option></select>
+          <select id="filterTimeframe" aria-label="Timeframe"><option value="all">All Timeframes</option></select>
+          <select id="filterSource">
+            <option value="all">All Sources</option>
+            <option value="Manual">Manual</option>
+            <option value="MT5">MT5</option>
+          </select>
+          <label class="filter-date"><span>From</span><input type="date" id="filterDate" aria-label="From date"></label>
+          <label class="filter-date"><span>To</span><input type="date" id="filterDateTo" aria-label="To date"></label>
+          <select id="sortTrades">
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="pl-high">Highest P/L</option>
+            <option value="pl-low">Lowest P/L</option>
+            <option value="r-high">Largest R</option>
+            <option value="r-low">Smallest R</option>
+            <option value="pair">Pair A–Z</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" id="clearFiltersBtn"><i class="fa-solid fa-xmark"></i> Clear</button>
+        </div>
+        <div class="filter-summary" id="journalSummary" aria-live="polite"></div>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap" id="journalTableWrap"></div>
+      </div>
+    </section>
+
+    <!-- ---------- ANALYTICS ---------- -->
+    <section class="page" id="page-analytics">
+      <div class="page-header">
+        <div>
+          <h1>Analytics</h1>
+          <p class="page-sub">Deep performance breakdown</p>
+        </div>
+        <div class="page-header-actions">
+          <label class="scope-select"><span>Scope</span>
+            <select id="analyticsScope" aria-label="Analytics scope">
+              <option value="active">Active account</option>
+              <option value="all">All accounts</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="stat-grid" id="analyticsMetricsGrid"></div>
+
+      <div class="grid-2">
+        <div class="card chart-card"><div class="card-head"><h3>Equity Curve</h3></div><div class="chart-wrap"><canvas id="anEquity"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Drawdown</h3></div><div class="chart-wrap"><canvas id="anDrawdown"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Daily P/L</h3></div><div class="chart-wrap"><canvas id="anDaily"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Weekly P/L</h3></div><div class="chart-wrap"><canvas id="anWeekly"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Monthly P/L</h3></div><div class="chart-wrap"><canvas id="anMonthly"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Yearly P/L</h3></div><div class="chart-wrap"><canvas id="anYearly"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Day-of-Week P/L</h3></div><div class="chart-wrap"><canvas id="anWeekday"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Pair Performance</h3></div><div class="chart-wrap"><canvas id="anPair"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Strategy Performance</h3></div><div class="chart-wrap"><canvas id="anStrategy"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Buy vs Sell (trade count)</h3></div><div class="chart-wrap"><canvas id="anBuySell"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>P/L by Direction</h3></div><div class="chart-wrap"><canvas id="anDirection"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Timeframe Performance</h3></div><div class="chart-wrap"><canvas id="anTimeframe"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Win / Loss Distribution</h3></div><div class="chart-wrap"><canvas id="anWinLoss"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Session Performance</h3></div><div class="chart-wrap"><canvas id="anSession"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Setup Quality Performance</h3></div><div class="chart-wrap"><canvas id="anSetup"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Market Condition Performance</h3></div><div class="chart-wrap"><canvas id="anMarket"></canvas></div></div>
+      </div>
+    </section>
+
+    <!-- ---------- STRATEGIES ---------- -->
+    <section class="page" id="page-strategies">
+      <div class="page-header">
+        <div>
+          <h1>Strategies</h1>
+          <p class="page-sub">How each strategy performs, based on the trades you have recorded</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Strategy Comparison</h3><span class="card-note">Click a row to open its trades</span></div>
+        <div class="scroll-wrap" id="strategyTableWrap"></div>
+      </div>
+      <div class="card chart-card">
+        <div class="card-head"><h3>Net Profit by Strategy</h3></div>
+        <div class="chart-wrap"><canvas id="stratChart"></canvas></div>
+      </div>
+    </section>
+
+    <!-- ---------- CALENDAR ---------- -->
+    <section class="page" id="page-calendar">
+      <div class="page-header">
+        <div>
+          <h1>Trading Calendar</h1>
+          <p class="page-sub">Your daily trading rhythm</p>
+        </div>
+        <div class="page-header-actions">
+          <label class="scope-select"><span>Scope</span>
+            <select id="calendarScope" aria-label="Calendar scope">
+              <option value="active">Active account</option>
+              <option value="all">All accounts</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="calendar-toolbar">
+          <button class="btn btn-ghost btn-sm" id="calPrevBtn"><i class="fa-solid fa-chevron-left"></i></button>
+          <h3 id="calMonthLabel">Month Year</h3>
+          <button class="btn btn-ghost btn-sm" id="calNextBtn"><i class="fa-solid fa-chevron-right"></i></button>
+          <button class="btn btn-ghost btn-sm" id="calTodayBtn">Today</button>
+        </div>
+        <div class="perf-summary cal-summary" id="calendarSummary"></div>
+        <div class="calendar-legend">
+          <span><i class="dot dot-pos"></i> Profitable</span>
+          <span><i class="dot dot-neg"></i> Losing</span>
+          <span><i class="dot dot-be"></i> Break-even</span>
+          <span><i class="dot dot-none"></i> No trading</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </div>
+
+      <div class="card" id="calendarDayDetail" style="display:none;">
+        <div class="card-head"><h3 id="calendarDayTitle">Day Detail</h3><button class="btn btn-ghost btn-sm" id="calDayJournalBtn" type="button">Open in Journal</button></div>
+        <div id="calendarDayStats" class="perf-summary"></div>
+        <div class="table-wrap" id="calendarDayTradesWrap"></div>
+      </div>
+    </section>
+
+    <!-- ---------- RISK CALCULATOR ---------- -->
+    <section class="page" id="page-risk">
+      <div class="page-header">
+        <div>
+          <h1>Risk Management</h1>
+          <p class="page-sub">Risk rules, live risk status and position sizing</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><h3>Risk Status (active account)</h3></div>
+          <div id="riskStatusPanel" class="risk-status"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Risk Rules</h3></div>
+          <p class="hint-text">These are personal guard-rails used to flag when you are approaching your own limits. They do not block trading or place any orders.</p>
+          <div class="form-grid">
+            <div class="field">
+              <label for="rrDailyLoss">Daily loss limit (% of day-start balance)</label>
+              <input type="number" id="rrDailyLoss" step="0.1" min="0">
+            </div>
+            <div class="field">
+              <label for="rrMaxTrades">Max trades per day (0 = off)</label>
+              <input type="number" id="rrMaxTrades" step="1" min="0">
+            </div>
+            <div class="field">
+              <label for="rrMaxConsec">Max consecutive losses</label>
+              <input type="number" id="rrMaxConsec" step="1" min="0">
+            </div>
+            <div class="field">
+              <label for="rrMaxDD">Max drawdown limit (%)</label>
+              <input type="number" id="rrMaxDD" step="0.5" min="0">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><h3>Inputs</h3></div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="rcBalance">Account Balance ($)</label>
+              <input type="number" id="rcBalance" step="0.01" value="10000">
+            </div>
+            <div class="field">
+              <label for="rcRiskPct">Risk %</label>
+              <input type="number" id="rcRiskPct" step="0.1" value="1">
+            </div>
+            <div class="field">
+              <label for="rcPair">Currency Pair</label>
+              <input type="text" id="rcPair" value="EURUSD" placeholder="e.g. EURUSD, USDJPY">
+            </div>
+            <div class="field">
+              <label for="rcEntry">Entry Price</label>
+              <input type="number" id="rcEntry" step="0.00001" value="1.10000">
+            </div>
+            <div class="field">
+              <label for="rcSL">Stop Loss</label>
+              <input type="number" id="rcSL" step="0.00001" value="1.09500">
+            </div>
+            <div class="field">
+              <label for="rcTP">Take Profit</label>
+              <input type="number" id="rcTP" step="0.00001" value="1.11000">
+            </div>
+            <div class="field">
+              <label for="rcPipValue">Pip Value / Lot ($)</label>
+              <input type="number" id="rcPipValue" step="0.01" value="10">
+            </div>
+            <div class="field">
+              <label for="rcSLPips">Stop-loss distance (pips) &mdash; optional</label>
+              <input type="number" id="rcSLPips" step="0.1" min="0" placeholder="Overrides Entry / Stop Loss">
+            </div>
+          </div>
+          <p class="hint-text">Estimates only. Pip value depends on the pair, account currency and your broker &mdash; confirm it before sizing a trade. Results describe a planned risk, never a guaranteed outcome.</p>
+          <div id="rcValidation" class="validation-msg" style="display:none;"></div>
+          <div class="form-actions">
+            <button class="btn btn-ghost" id="rcResetBtn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Results</h3></div>
+          <div class="rc-results" id="rcResults"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- GOALS ---------- -->
+    <section class="page" id="page-goals">
+      <div class="page-header">
+        <div>
+          <h1>Goals</h1>
+          <p class="page-sub">Set targets. Track progress. Stay accountable.</p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-primary" id="openAddGoalBtn"><i class="fa-solid fa-plus"></i> Create Goal</button>
+        </div>
+      </div>
+
+      <div id="goalsGrid" class="goals-grid"></div>
+    </section>
+
+    <!-- ---------- PSYCHOLOGY ---------- -->
+    <section class="page" id="page-psychology">
+      <div class="page-header">
+        <div>
+          <h1>Psychology</h1>
+          <p class="page-sub">The mental side of trading, measured</p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-primary" id="openAddPsychBtn"><i class="fa-solid fa-plus"></i> Add Entry</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid" id="psychStatsGrid"></div>
+
+      <div class="card">
+        <div class="card-head"><h3>Psychology vs Performance</h3><span class="card-note">From the emotion &amp; behaviour fields on your trades</span></div>
+        <div id="psychTradeAnalytics"></div>
+        <p class="hint-text">These figures show associations in your own data, not proof of cause. Small samples can be misleading.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card chart-card"><div class="card-head"><h3>Net P/L by Emotion Before Trade</h3></div><div class="chart-wrap"><canvas id="psEmotion"></canvas></div></div>
+        <div class="card chart-card"><div class="card-head"><h3>Win Rate by Confidence</h3></div><div class="chart-wrap"><canvas id="psConfidence"></canvas></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Recent Entries</h3></div>
+        <div id="psychEntries" class="psych-list"></div>
+      </div>
+    </section>
+
+    <!-- ---------- REPORTS ---------- -->
+    <section class="page" id="page-reports">
+      <div class="page-header no-print">
+        <div>
+          <h1>Reports</h1>
+          <p class="page-sub">Printable performance reports and data exports</p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-ghost" id="reportCSV"><i class="fa-solid fa-file-csv"></i> Trades CSV</button>
+          <button class="btn btn-ghost" id="reportJSON"><i class="fa-solid fa-file-code"></i> Report JSON</button>
+          <button class="btn btn-primary" id="reportPrint"><i class="fa-solid fa-print"></i> Print / Save as PDF</button>
+        </div>
+      </div>
+
+      <div class="card filter-card no-print">
+        <div class="filter-row">
+          <label class="scope-select"><span>Period</span>
+            <select id="reportPeriod">
+              <option value="all">All time</option>
+              <option value="month">This month</option>
+              <option value="30">Last 30 days</option>
+              <option value="90">Last 90 days</option>
+              <option value="year">This year</option>
+              <option value="custom">Custom range</option>
+            </select>
+          </label>
+          <label class="filter-date" id="reportFromWrap"><span>From</span><input type="date" id="reportFrom"></label>
+          <label class="filter-date" id="reportToWrap"><span>To</span><input type="date" id="reportTo"></label>
+          <label class="scope-select"><span>Account</span>
+            <select id="reportScope">
+              <option value="active">Active account</option>
+              <option value="all">All accounts</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div id="reportBody" class="report-body"></div>
+    </section>
+
+    <!-- ---------- ACCOUNTS ---------- -->
+    <section class="page" id="page-accounts">
+      <div class="page-header">
+        <div>
+          <h1>Accounts</h1>
+          <p class="page-sub">Manage your trading accounts</p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-primary" id="openAddAccountBtn"><i class="fa-solid fa-plus"></i> Add Account</button>
+        </div>
+      </div>
+
+      <div id="accountsGrid" class="accounts-grid"></div>
+    </section>
+
+    <!-- ---------- MT5 SYNC ---------- -->
+    <section class="page" id="page-mt5">
+      <div class="page-header">
+        <div>
+          <h1>MT5 Sync</h1>
+          <p class="page-sub">Read-only connection to your local MetaTrader 5 bridge</p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-ghost" id="mt5TestBtn"><i class="fa-solid fa-plug"></i> Test Connection</button>
+          <button class="btn btn-ghost" id="mt5RefreshBtn"><i class="fa-solid fa-rotate"></i> Refresh Account</button>
+          <button class="btn btn-primary" id="mt5SyncBtn"><i class="fa-solid fa-arrows-rotate"></i> Sync Now</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Connection Status</h3>
+          <div class="mt5-refresh-control">
+            <label for="mt5AutoRefresh">Auto-refresh account</label>
+            <select id="mt5AutoRefresh">
+              <option value="0">Off</option>
+              <option value="30">Every 30 seconds</option>
+              <option value="60">Every 1 minute</option>
+              <option value="300">Every 5 minutes</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt5-status-row">
+          <span class="mt5-status-dot" id="mt5StatusDot"></span>
+          <span class="mt5-status-label" id="mt5StatusLabel">Checking…</span>
+          <span class="mt5-last-sync" id="mt5LastSync">Never synced</span>
+        </div>
+        <div id="mt5StatusMessage" class="validation-msg" style="display:none;"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><h3>MT5 Account</h3></div>
+          <div id="mt5AccountGrid" class="rc-results"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Last Sync Result</h3></div>
+          <div id="mt5SyncResult" class="rc-results"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Open MT5 Positions</h3></div>
+        <div class="table-wrap" id="mt5PositionsWrap"></div>
+      </div>
+    </section>
+
+    <!-- ---------- SETTINGS ---------- -->
+    <section class="page" id="page-settings">
+      <div class="page-header">
+        <div>
+          <h1>Settings</h1>
+          <p class="page-sub">Configure Copperstone to fit your workflow</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><h3>General</h3></div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="setCurrency">Currency</label>
+              <select id="setCurrency">
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="JPY">JPY (¥)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="setDefaultRisk">Default Risk %</label>
+              <input type="number" id="setDefaultRisk" step="0.1" value="1">
+            </div>
+            <div class="field">
+              <label for="setDefaultAccount">Default Account</label>
+              <select id="setDefaultAccount"></select>
+            </div>
+            <div class="field">
+              <label for="setDateFormat">Date Format</label>
+              <select id="setDateFormat">
+                <option value="MDY">MM/DD/YYYY</option>
+                <option value="DMY">DD/MM/YYYY</option>
+                <option value="YMD">YYYY-MM-DD</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>Appearance</h3></div>
+          <div class="form-grid">
+            <div class="field">
+              <label for="setTheme">Theme</label>
+              <select id="setTheme">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+              </select>
+            </div>
+            <div class="field field-inline">
+              <label for="setCompactMode">Compact Mode</label>
+              <label class="switch"><input type="checkbox" id="setCompactMode"><span class="slider"></span></label>
+            </div>
+          </div>
+          <div class="card-head" style="margin-top:20px;"><h3>Notifications</h3></div>
+          <div class="form-grid">
+            <div class="field field-inline">
+              <label for="setNotifications">Enable Toast Notifications</label>
+              <label class="switch"><input type="checkbox" id="setNotifications" checked><span class="slider"></span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="profileCard">
+        <div class="card-head"><h3>Profile &amp; Security</h3></div>
+        <div id="profileBody"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Data Management</h3></div>
+        <p class="hint-text">Your journal lives in this browser's local storage. Export a backup regularly &mdash; clearing browser data or switching devices will otherwise lose it.</p>
+        <div class="data-actions">
+          <button class="btn btn-secondary" id="setExportCSV"><i class="fa-solid fa-file-csv"></i> Export Trades CSV</button>
+          <button class="btn btn-secondary" id="setExportJSON"><i class="fa-solid fa-file-code"></i> Export Full Backup JSON</button>
+          <label class="btn btn-secondary" for="setImportJSON"><i class="fa-solid fa-file-import"></i> Import Backup JSON</label>
+          <input type="file" id="setImportJSON" accept=".json" hidden>
+          <button class="btn btn-danger" id="setStartFresh"><i class="fa-solid fa-eraser"></i> Start Fresh (empty journal)</button>
+          <button class="btn btn-danger" id="setResetData"><i class="fa-solid fa-triangle-exclamation"></i> Reset to Demo Data</button>
+        </div>
+        <div class="card-head" style="margin-top:22px;"><h3>Local Snapshots</h3></div>
+        <p class="hint-text">Copperstone keeps up to three automatic safety snapshots taken just before destructive actions (import-replace, reset, start fresh). Snapshots exclude screenshots to save space.</p>
+        <div id="snapshotList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>About This Edition</h3></div>
+        <div class="about-grid" id="aboutBody"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ TOASTS ============ -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal-overlay" id="modalOverlay">
+
+  <!-- Trade Modal -->
+  <div class="modal modal-lg" id="tradeModal">
+    <div class="modal-head">
+      <h2 id="tradeModalTitle">Add Trade</h2>
+      <button class="icon-btn modal-close" data-close="tradeModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="tradeForm" class="modal-body">
+      <input type="hidden" id="tradeId">
+      <div class="trade-id-line" id="tfTradeNumberLine" hidden>Trade ID: <b id="tfTradeNumber"></b></div>
+      <div class="form-section-title">Trade Info</div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="tfAccount">Account *</label>
+          <select id="tfAccount" required></select>
+        </div>
+        <div class="field">
+          <label for="tfPair">Currency Pair *</label>
+          <input type="text" id="tfPair" required placeholder="EURUSD">
+        </div>
+        <div class="field">
+          <label for="tfDirection">Direction *</label>
+          <select id="tfDirection" required>
+            <option value="Buy">Buy</option>
+            <option value="Sell">Sell</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="tfDate">Trade Date *</label>
+          <input type="date" id="tfDate" required>
+        </div>
+        <div class="field">
+          <label for="tfOpenTime">Open Time</label>
+          <input type="time" id="tfOpenTime">
+        </div>
+        <div class="field">
+          <label for="tfCloseTime">Close Time</label>
+          <input type="time" id="tfCloseTime">
+        </div>
+      </div>
+
+      <div class="form-section-title">Prices &amp; Risk</div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="tfEntry">Entry Price *</label>
+          <input type="number" step="0.00001" id="tfEntry" required>
+        </div>
+        <div class="field">
+          <label for="tfSL">Stop Loss</label>
+          <input type="number" step="0.00001" id="tfSL">
+        </div>
+        <div class="field">
+          <label for="tfTP">Take Profit</label>
+          <input type="number" step="0.00001" id="tfTP">
+        </div>
+        <div class="field">
+          <label for="tfExit">Exit Price</label>
+          <input type="number" step="0.00001" id="tfExit">
+        </div>
+        <div class="field">
+          <label for="tfRiskPct">Risk %</label>
+          <input type="number" step="0.1" id="tfRiskPct" value="1">
+        </div>
+        <div class="field">
+          <label for="tfRiskAmount">Risk Amount ($)</label>
+          <input type="number" step="0.01" id="tfRiskAmount" readonly>
+        </div>
+        <div class="field">
+          <label for="tfPositionSize">Position Size (lots)</label>
+          <input type="number" step="0.01" id="tfPositionSize">
+        </div>
+        <div class="field">
+          <label for="tfPipValue">Pip Value / Lot ($)</label>
+          <input type="number" step="0.01" id="tfPipValue" value="10">
+        </div>
+        <div class="field">
+          <label for="tfPips">Pips</label>
+          <input type="number" step="0.1" id="tfPips" readonly>
+        </div>
+        <div class="field">
+          <label for="tfPL">Gross P/L ($)</label>
+          <input type="number" step="0.01" id="tfPL" placeholder="Auto-calculated if left blank">
+        </div>
+        <div class="field">
+          <label for="tfCommission">Commission ($, cost)</label>
+          <input type="number" step="0.01" min="0" id="tfCommission" placeholder="0.00">
+        </div>
+        <div class="field">
+          <label for="tfSwap">Swap ($, +credit / &minus;charge)</label>
+          <input type="number" step="0.01" id="tfSwap" placeholder="0.00">
+        </div>
+        <div class="field">
+          <label for="tfSpread">Spread (pips, info only)</label>
+          <input type="number" step="0.1" min="0" id="tfSpread">
+        </div>
+        <div class="field">
+          <label for="tfNetPL">Net P/L ($)</label>
+          <input type="number" step="0.01" id="tfNetPL" readonly>
+        </div>
+        <div class="field">
+          <label for="tfR">R Multiple</label>
+          <input type="number" step="0.01" id="tfR" readonly>
+        </div>
+        <div class="field">
+          <label for="tfPlannedRR">Planned R:R</label>
+          <input type="text" id="tfPlannedRR" readonly>
+        </div>
+      </div>
+
+      <div class="form-section-title">Classification</div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="tfStrategy">Strategy</label>
+          <input type="text" id="tfStrategy" list="strategyList" placeholder="e.g. Breakout, Trend Pullback">
+          <datalist id="strategyList"></datalist>
+        </div>
+        <div class="field">
+          <label for="tfTimeframe">Timeframe</label>
+          <select id="tfTimeframe">
+            <option value="">—</option>
+            <option>M1</option><option>M5</option><option>M15</option><option>M30</option>
+            <option>H1</option><option>H4</option><option>D1</option><option>W1</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="tfSetup">Trade Setup</label>
+          <input type="text" id="tfSetup" placeholder="e.g. Break &amp; retest, Order block">
+        </div>
+        <div class="field">
+          <label for="tfSession">Trading Session</label>
+          <select id="tfSession">
+            <option value="">—</option>
+            <option value="Asian">Asian</option>
+            <option value="London">London</option>
+            <option value="New York">New York</option>
+            <option value="Overlap">Overlap</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="tfSetupQuality">Setup Quality</label>
+          <select id="tfSetupQuality">
+            <option value="">—</option>
+            <option value="A+">A+</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="tfMarketCondition">Market Condition</label>
+          <select id="tfMarketCondition">
+            <option value="">—</option>
+            <option value="Trending">Trending</option>
+            <option value="Ranging">Ranging</option>
+            <option value="Volatile">Volatile</option>
+            <option value="Quiet">Quiet</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="tfTags">Tags (comma separated)</label>
+          <input type="text" id="tfTags" placeholder="news, high-conviction">
+        </div>
+      </div>
+
+      <div class="form-section-title">Trade Rationale</div>
+      <div class="form-grid form-grid-1">
+        <div class="field">
+          <label for="tfReason">Trade Reason (thesis)</label>
+          <textarea id="tfReason" rows="2" placeholder="Why did this trade meet your plan?"></textarea>
+        </div>
+        <div class="field">
+          <label for="tfEntryReason">Entry Reason</label>
+          <textarea id="tfEntryReason" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label for="tfExitReason">Exit Reason</label>
+          <textarea id="tfExitReason" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="form-section-title">Psychology</div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="tfEmoBefore">Emotion before trade</label>
+          <select id="tfEmoBefore" class="emo-select"></select>
+        </div>
+        <div class="field">
+          <label for="tfEmoDuring">Emotion during trade</label>
+          <select id="tfEmoDuring" class="emo-select"></select>
+        </div>
+        <div class="field">
+          <label for="tfEmoAfter">Emotion after trade</label>
+          <select id="tfEmoAfter" class="emo-select"></select>
+        </div>
+        <div class="field">
+          <label for="tfConfidence">Confidence (1–10)</label>
+          <select id="tfConfidence" class="rate-select"></select>
+        </div>
+        <div class="field">
+          <label for="tfDiscipline">Discipline (1–10)</label>
+          <select id="tfDiscipline" class="rate-select"></select>
+        </div>
+        <div class="field">
+          <label for="tfPatience">Patience (1–10)</label>
+          <select id="tfPatience" class="rate-select"></select>
+        </div>
+      </div>
+      <fieldset class="flag-group">
+        <legend>Behaviour flags</legend>
+        <label class="flag"><input type="checkbox" id="tfFlagFomo"> FOMO</label>
+        <label class="flag"><input type="checkbox" id="tfFlagRevenge"> Revenge trading</label>
+        <label class="flag"><input type="checkbox" id="tfFlagOvertrading"> Overtrading</label>
+        <label class="flag"><input type="checkbox" id="tfFlagFear"> Fear</label>
+        <label class="flag"><input type="checkbox" id="tfFlagGreed"> Greed</label>
+        <label class="flag"><input type="checkbox" id="tfFlagRule"> Rule violation</label>
+      </fieldset>
+
+      <div class="form-section-title">Reflection</div>
+      <div class="form-grid form-grid-1">
+        <div class="field">
+          <label for="tfMistakes">Mistakes</label>
+          <textarea id="tfMistakes" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label for="tfLessons">Lessons Learned</label>
+          <textarea id="tfLessons" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label for="tfNotes">Notes</label>
+          <textarea id="tfNotes" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="form-section-title">Screenshots</div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="tfShotBefore">Before Trade</label>
+          <input type="file" id="tfShotBefore" accept="image/*">
+          <img class="shot-preview" id="tfShotBeforePreview" style="display:none;">
+        </div>
+        <div class="field">
+          <label for="tfShotAfter">After Trade</label>
+          <input type="file" id="tfShotAfter" accept="image/*">
+          <img class="shot-preview" id="tfShotAfterPreview" style="display:none;">
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close="tradeModal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Trade</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Trade Detail Modal -->
+  <div class="modal" id="tradeDetailModal">
+    <div class="modal-head">
+      <h2>Trade Detail</h2>
+      <button class="icon-btn modal-close" data-close="tradeDetailModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="tradeDetailBody"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="tradeDetailEditBtn">Edit</button>
+      <button class="btn btn-danger" id="tradeDetailDeleteBtn">Delete</button>
+    </div>
+  </div>
+
+  <!-- Goal Modal -->
+  <div class="modal" id="goalModal">
+    <div class="modal-head">
+      <h2 id="goalModalTitle">Create Goal</h2>
+      <button class="icon-btn modal-close" data-close="goalModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="goalForm" class="modal-body">
+      <input type="hidden" id="goalId">
+      <div class="form-grid form-grid-1">
+        <div class="field">
+          <label for="gfName">Goal Name *</label>
+          <input type="text" id="gfName" required placeholder="e.g. Hit $500 profit this month">
+        </div>
+        <div class="field">
+          <label for="gfType">Goal Type *</label>
+          <select id="gfType" required>
+            <option value="Profit Target">Profit Target</option>
+            <option value="Monthly Profit">Monthly Profit</option>
+            <option value="Win Rate Target">Win Rate Target</option>
+            <option value="Maximum Drawdown">Maximum Drawdown</option>
+            <option value="Trade Count">Trade Count</option>
+            <option value="Average R Target">Average R Target</option>
+            <option value="Monthly Trade Count">Monthly Trade Count</option>
+            <option value="Maximum Monthly Loss">Maximum Monthly Loss</option>
+            <option value="Risk Compliance">Risk Compliance (%)</option>
+            <option value="Discipline Score">Discipline Score (%)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="gfTarget">Target *</label>
+          <input type="number" step="0.01" id="gfTarget" required>
+        </div>
+        <div class="field">
+          <label for="gfCurrent">Current Value</label>
+          <input type="number" step="0.01" id="gfCurrent" value="0">
+        </div>
+        <div class="field">
+          <label for="gfStart">Start Date</label>
+          <input type="date" id="gfStart">
+        </div>
+        <div class="field">
+          <label for="gfDeadline">Deadline</label>
+          <input type="date" id="gfDeadline">
+        </div>
+        <div class="field">
+          <label for="gfPeriod">Period</label>
+          <select id="gfPeriod">
+            <option value="Weekly">Weekly</option>
+            <option value="Monthly">Monthly</option>
+            <option value="Quarterly">Quarterly</option>
+            <option value="Yearly">Yearly</option>
+            <option value="Ongoing">Ongoing</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="gfNotes">Notes</label>
+          <textarea id="gfNotes" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close="goalModal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Goal</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Psychology Modal -->
+  <div class="modal" id="psychModal">
+    <div class="modal-head">
+      <h2>Add Psychology Entry</h2>
+      <button class="icon-btn modal-close" data-close="psychModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="psychForm" class="modal-body">
+      <div class="form-grid">
+        <div class="field">
+          <label for="pfDate">Date *</label>
+          <input type="date" id="pfDate" required>
+        </div>
+        <div class="field">
+          <label for="pfMood">Mood</label>
+          <select id="pfMood">
+            <option>Calm</option><option>Confident</option><option>Anxious</option>
+            <option>Frustrated</option><option>Excited</option><option>Tired</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-section-title">Ratings (1–10)</div>
+      <div class="rating-grid">
+        <div class="field"><label for="pfConfidence">Confidence</label><input type="range" min="1" max="10" id="pfConfidence" value="5"><span class="range-val" id="pfConfidenceVal">5</span></div>
+        <div class="field"><label for="pfDiscipline">Discipline</label><input type="range" min="1" max="10" id="pfDiscipline" value="5"><span class="range-val" id="pfDisciplineVal">5</span></div>
+        <div class="field"><label for="pfFear">Fear</label><input type="range" min="1" max="10" id="pfFear" value="5"><span class="range-val" id="pfFearVal">5</span></div>
+        <div class="field"><label for="pfGreed">Greed</label><input type="range" min="1" max="10" id="pfGreed" value="5"><span class="range-val" id="pfGreedVal">5</span></div>
+        <div class="field"><label for="pfFomo">FOMO</label><input type="range" min="1" max="10" id="pfFomo" value="5"><span class="range-val" id="pfFomoVal">5</span></div>
+        <div class="field"><label for="pfRevenge">Revenge Trading</label><input type="range" min="1" max="10" id="pfRevenge" value="5"><span class="range-val" id="pfRevengeVal">5</span></div>
+        <div class="field"><label for="pfStress">Stress</label><input type="range" min="1" max="10" id="pfStress" value="5"><span class="range-val" id="pfStressVal">5</span></div>
+      </div>
+      <div class="form-section-title">Reflection</div>
+      <div class="form-grid form-grid-1">
+        <div class="field"><label for="pfMistakes">Mistakes</label><textarea id="pfMistakes" rows="2"></textarea></div>
+        <div class="field"><label for="pfLessons">Lessons Learned</label><textarea id="pfLessons" rows="2"></textarea></div>
+        <div class="field"><label for="pfNotes">Notes</label><textarea id="pfNotes" rows="2"></textarea></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close="psychModal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Entry</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Account Modal -->
+  <div class="modal" id="accountModal">
+    <div class="modal-head">
+      <h2 id="accountModalTitle">Add Account</h2>
+      <button class="icon-btn modal-close" data-close="accountModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="accountForm" class="modal-body">
+      <input type="hidden" id="accountId">
+      <div class="form-grid">
+        <div class="field">
+          <label for="afName">Account Name *</label>
+          <input type="text" id="afName" required placeholder="e.g. Main Live Account">
+        </div>
+        <div class="field">
+          <label for="afBroker">Broker</label>
+          <input type="text" id="afBroker" placeholder="e.g. IC Markets">
+        </div>
+        <div class="field">
+          <label for="afType">Account Type</label>
+          <select id="afType">
+            <option value="Demo">Demo</option>
+            <option value="Live">Live</option>
+            <option value="Prop Firm">Prop Firm</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="afCurrency">Currency</label>
+          <select id="afCurrency">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="JPY">JPY</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="afInitialBalance">Initial Balance *</label>
+          <input type="number" step="0.01" id="afInitialBalance" required value="10000">
+        </div>
+        <div class="field">
+          <label for="afCurrentBalance">Current Balance (calculated)</label>
+          <input type="number" step="0.01" id="afCurrentBalance" readonly title="Initial balance plus the P/L of closed trades">
+        </div>
+        <div class="field field-inline">
+          <label for="afDefault">Set as Default</label>
+          <label class="switch"><input type="checkbox" id="afDefault"><span class="slider"></span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="afNotes">Notes</label>
+        <textarea id="afNotes" rows="2"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close="accountModal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Account</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Import Modal -->
+  <div class="modal" id="importModal">
+    <div class="modal-head">
+      <h2 id="importModalTitle">Import Backup</h2>
+      <button class="icon-btn modal-close" data-close="importModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <p id="importSummary"></p>
+      <div class="import-options">
+        <div class="import-option"><b>Merge</b><span>Adds trades, accounts, goals and entries that are not already in your journal. Nothing you have now is removed. Duplicates (same ID or same MT5 position) are skipped.</span></div>
+        <div class="import-option"><b>Replace</b><span>Replaces everything with the backup. A safety snapshot and a backup file of your current data are created first.</span></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close="importModal" type="button">Cancel</button>
+      <button class="btn btn-secondary" id="importMergeBtn" type="button">Merge</button>
+      <button class="btn btn-danger" id="importReplaceBtn" type="button">Replace</button>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal modal-sm" id="confirmModal">
+    <div class="modal-head">
+      <h2 id="confirmModalTitle">Are you sure?</h2>
+      <button class="icon-btn modal-close" data-close="confirmModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <p id="confirmModalMessage">This action cannot be undone.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" data-close="confirmModal">Cancel</button>
+      <button class="btn btn-danger" id="confirmModalConfirmBtn">Confirm</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
